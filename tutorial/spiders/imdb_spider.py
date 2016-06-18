@@ -3,6 +3,8 @@ import scrapy
 from tutorial.items import EpisodeItem
 
 
+maxSeasons = 3
+
 class ImdbSpider(scrapy.Spider):
     name = "imdb"
     allowed_domains = ["imdb.com"]
@@ -12,8 +14,6 @@ class ImdbSpider(scrapy.Spider):
         # "http://www.imdb.com/title/tt0060028/episodes?season=2",
         # "http://www.imdb.com/title/tt0060028/episodes?season=3"
     ]
-
-    seasonIndex = 1
 
     # rule to follow "next season" type of links
     # rules = [
@@ -36,5 +36,14 @@ class ImdbSpider(scrapy.Spider):
 
         # The next page to follow will have ?episodes=n url param
         # todo: Find number of seasons from drop down at the top of the page
-        nextUrl = reponse.request.url + "?season=" + (++seasonIndex)
-        yield scrappy.Request(url=nextUrl, self.parse)
+        if 'seasonIndex' in response.meta:
+            seasonIndex = response.meta['seasonIndex']
+        else:
+            seasonIndex = 1
+
+        print ("Season index extracted is ", seasonIndex)
+        if seasonIndex < maxSeasons:
+            nextUrl = response.request.url + "?season=" + `(seasonIndex + 1)`
+            request = scrapy.Request(nextUrl, self.parse)
+            request.meta['seasonIndex'] = seasonIndex + 1
+            yield request
