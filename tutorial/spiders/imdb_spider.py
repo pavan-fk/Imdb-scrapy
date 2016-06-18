@@ -5,6 +5,7 @@ from tutorial.items import EpisodeItem
 
 maxSeasons = 3
 
+
 class ImdbSpider(scrapy.Spider):
     name = "imdb"
     allowed_domains = ["imdb.com"]
@@ -15,10 +16,13 @@ class ImdbSpider(scrapy.Spider):
         # "http://www.imdb.com/title/tt0060028/episodes?season=3"
     ]
 
-    # rule to follow "next season" type of links
-    # rules = [
-    # Rule(LxmlLinkExtractor(), callback=parse, follow=True)
-    # ]
+
+    def getNextSeasonRequest(self, response, currentSeasonIndex):
+			baseUrl = response.request.url.split('?')[0]
+			nextUrl = baseUrl + "?season=" + `(currentSeasonIndex + 1)`
+			request = scrapy.Request(nextUrl, self.parse)
+			request.meta['seasonIndex'] = currentSeasonIndex + 1
+			return request
 
     # Parse season episode list to extract link for each episode
     def parse(self, response):
@@ -43,7 +47,4 @@ class ImdbSpider(scrapy.Spider):
 
         print ("Season index extracted is ", seasonIndex)
         if seasonIndex < maxSeasons:
-            nextUrl = response.request.url + "?season=" + `(seasonIndex + 1)`
-            request = scrapy.Request(nextUrl, self.parse)
-            request.meta['seasonIndex'] = seasonIndex + 1
-            yield request
+            yield self.getNextSeasonRequest(response, seasonIndex)
