@@ -16,13 +16,12 @@ class ImdbSpider(scrapy.Spider):
         # "http://www.imdb.com/title/tt0060028/episodes?season=3"
     ]
 
-
     def getNextSeasonRequest(self, response, currentSeasonIndex):
-			baseUrl = response.request.url.split('?')[0]
-			nextUrl = baseUrl + "?season=" + `(currentSeasonIndex + 1)`
-			request = scrapy.Request(nextUrl, self.parse)
-			request.meta['seasonIndex'] = currentSeasonIndex + 1
-			return request
+        baseUrl = response.request.url.split('?')[0]
+        nextUrl = baseUrl + "?season=" + `(currentSeasonIndex + 1)`
+        request = scrapy.Request(nextUrl, self.parse)
+        request.meta['seasonIndex'] = currentSeasonIndex + 1
+        return request
 
     # Parse season episode list to extract link for each episode
     def parse(self, response):
