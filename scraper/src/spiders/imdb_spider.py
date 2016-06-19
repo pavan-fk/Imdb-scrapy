@@ -11,7 +11,7 @@ class ImdbSpider(scrapy.Spider):
 
     def __init__(self, domain='', startUrl=''):
         self.start_urls = [startUrl]
-        self.allowed_domains = [domain]
+        self.allowed_domains = ["imdb.com"]
 
     # Extract page url for episode list of next season
     def getNextSeasonRequest(self, response, currentSeasonIndex):
@@ -32,14 +32,8 @@ class ImdbSpider(scrapy.Spider):
         # parse the list of episodes in the page
         for episodeDiv in response.xpath("//div[@class='list detail eplist']/div"):
             infoDiv = episodeDiv.xpath("div[@class='info']")
-            imageDiv = episodeDiv.xpath("div[@class='image']")
-            episode = EpisodeItem()
-            episode["index"] = imageDiv.xpath("a/div/div/text()").extract()
-            episode["link"] = infoDiv.xpath("strong/a/@href").extract()
-            episode["title"] = infoDiv.xpath("strong/a/@title").extract()
-            episode["description"] = infoDiv.xpath(
-                "div[@class='item_description']/text()").extract()
-            yield episode
+            yield scrapy.Request(
+                "http://www.imdb.com" + infoDiv.xpath("strong/a/@href").extract()[0], self.parseEpisodePage)
 
         # The next page to follow will have ?episodes=n url param
         # todo: Find number of seasons from drop down at the top of the page
@@ -48,17 +42,24 @@ class ImdbSpider(scrapy.Spider):
         else:
             seasonIndex = 1
 
-        print ("Season index extracted is ", seasonIndex)
         if seasonIndex < maxSeasons:
             yield self.getNextSeasonRequest(response, seasonIndex)
 
     # Parse individual episode page to extract rating
     def parseEpisodePage(self, response):
-        episodeRating = response.xpath(
-            "//div[@class='imdbRating']/div[@class='ratingValue']/strong/span[@itemprop='ratingValue']/text()").extract()
-        numberOfRatings = response.xpath(
-            "//div[@class='imdbRating']/a/span[@class='small']/text()").extract()
-        completeLink = response.request.url
+        episode = EpisodeItem()
+        episode["episodeRating"] = response.xpath(
+            "//div[@class='imdbRating']/div[@class='ratingValue']/strong/span[@itemprop='ratingValue']/text()").extract()[0]
+        episode["numberOfRatings"] = response.xpath(
+            "//div[@class='imdbRating']/a/span[@class='small']/text()").extract()[0]
+        episode["link"] = response.request.url
         # todo extract more info about episode
-        description = response.xpath(
-            "//div[@class='minPosterWithPlotSummaryHeight']/div[@class='plot_summary_wrapper']/div[@class='plot_summary minPlotHeightWithPoster']/div[@class='summary_text']/text()").extract()
+        episode["description"] = response.xpath(
+            "//div[@class='minPosterWithPlotSummaryHeight']/div[@class='plot_summary_wrapper']/div[@class='plot_summary minPlotHeightWithPoster']/div[@class='summary_text']/text()").extract()[0].strip()
+        episode["title"] = response.xpath(
+            "//div[@class='title_wrapper']/h1[@itemprop='name']/text()").extract()[0].strip()
+        episode["season"] = response.xpath(
+            "//div[@class='button_panel navigation_panel']//div[@class='bp_heading']/text()").extract()[0].split()[1]
+        episode["episode"] = response.xpath(
+            "//div[@class='button_panel navigation_panel']//div[@class='bp_heading']/text()").extract()[1].split()[1]
+        yield episode
