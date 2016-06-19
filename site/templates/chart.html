@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<title></title>
+	<script   src="https://code.jquery.com/jquery-3.0.0.min.js"   integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0="   crossorigin="anonymous"></script>
+	<script type="text/javascript" src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+			var chart = new CanvasJS.Chart("chartContainer", {
+
+				zoomEnabled: true,
+				panEnabled: true,
+				animateEnabled: true,
+				axisY:{
+					lineThickness:0,
+					gridThickness:1,
+				},
+				data: [{
+					type: "scatter",
+					lineThickness: 2,
+					dataPoints: [] }
+					] 
+
+				});
+
+			function updateChart(){
+				$.getJSON("http://127.0.0.1:5000/api", function (data_points) {
+					for(var i = 0; i < data_points.length; i++){
+						chart.options.data[0].dataPoints.push(data_points[i]);
+					}
+					chart.render();
+				});
+			}   
+			updateChart();
+		});
+		
+	</script>
+</head>
+<body>
+	<div id="chartContainer" style="height: 380px;"></div>
+</body>
+</html>
