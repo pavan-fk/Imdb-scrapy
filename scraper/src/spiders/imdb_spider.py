@@ -1,6 +1,6 @@
 import scrapy
 
-from tutorial.items import EpisodeItem
+from src.items import EpisodeItem
 
 
 maxSeasons = 3
@@ -8,13 +8,10 @@ maxSeasons = 3
 
 class ImdbSpider(scrapy.Spider):
     name = "imdb"
-    allowed_domains = ["imdb.com"]
-    # Season 1 page episode list of Star Trek the Orginal series
-    start_urls = [
-        "http://www.imdb.com/title/tt0060028/episodes",
-        # "http://www.imdb.com/title/tt0060028/episodes?season=2",
-        # "http://www.imdb.com/title/tt0060028/episodes?season=3"
-    ]
+
+    def __init__(self, domain='', startUrl=''):
+        self.start_urls = [startUrl]
+        self.allowed_domains = [domain]
 
     def getNextSeasonRequest(self, response, currentSeasonIndex):
         baseUrl = response.request.url.split('?')[0]
@@ -25,6 +22,12 @@ class ImdbSpider(scrapy.Spider):
 
     # Parse season episode list to extract link for each episode
     def parse(self, response):
+
+        seriesName = response.xpath(
+            "//h3[@itemprop='name']/a/text()").extract()
+        seriesYears = response.xpath(
+            "//h3[@itemprop='name']/span/text()").extract()
+
         # parse the list of episodes in the page
         for episodeDiv in response.xpath("//div[@class='list detail eplist']/div"):
             infoDiv = episodeDiv.xpath("div[@class='info']")
