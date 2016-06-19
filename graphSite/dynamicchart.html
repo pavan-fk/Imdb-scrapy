@@ -13,12 +13,12 @@
                 zoomEnabled: true,
                 panEnabled: true,
                 animateEnabled: true,
-                data: [ {
+                data: [{
                     type: "line",
-                    dataPoints: [] 
-                } ] 
+                    dataPoints: [] }
+                    ] 
 
-            });
+                });
 
             function updateChart(){
                 $.getJSON("http://127.0.0.1:5000/api", function (data_points) {
@@ -30,27 +30,7 @@
             }   
             updateChart();
         });
-
-
-
-        // $(document).ready(function () {
-        //     $.getJSON("http://127.0.0.1:5000/api", function (result) {
-
-        //         // console.log(result[0]);
-        //         var chart = new CanvasJS.Chart("chartContainer", {
-        //             axisY:{
-        //                 gridThickness: 0.5
-        //             },
-        //             data: [
-        //             {
-        //                 type: "line",
-        //                 dataPoints: result
-        //             }
-        //             ]
-        //         });
-        //         chart.render();
-        //     });
-        // });
+        
     </script>
 </head>
 <body>

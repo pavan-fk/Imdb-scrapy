@@ -1,20 +1,32 @@
 from flask import Flask, json as flask_json
 from flask_restful import Resource, Api
 import json
+import random
 
 app = Flask(__name__)
 api = Api(app)
 
 
+def createDataArray():
+    dataArray = []
+    dataArrayObject = {}
+    dataArrayObject["type"] = "line"
+    dataPoints = []
+    for episode in json.load(open("/Users/pavan.k/Code/tv-trends/data/star_trek.json")):
+        dataPoints.append(createDataPoint(episode))
+    dataArrayObject["dataPoints"] = dataPoints
+    dataArray.append(dataArrayObject)
+    return dataPoints
+
+
+def createDataPoint(episodeObject):
+		season = int(episodeObject["season"])
+		return {"x": int(episodeObject["episode"]), "y": float(episodeObject["episodeRating"]), "toolTipContent": episodeObject["title"], "color": '#%02X%02X%02X' % (season, season, season)}
+
+
 @app.route('/api', methods=['GET'])
 def api():
-    a = []
-    episodeNumber = 1
-    for episode in json.load(open("/Users/pavan.k/Code/tv-trends/data/star_trek.json")):
-        a.append({"x": episodeNumber,
-                  "y": float(episode["episodeRating"]), "toolTipContent": episode["title"]})
-        episodeNumber = episodeNumber + 1
-    response = flask_json.jsonify(a)
+    response=flask_json.jsonify(createDataArray())
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
