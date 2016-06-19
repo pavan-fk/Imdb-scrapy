@@ -7,6 +7,8 @@ app = Flask(__name__)
 api = Api(app)
 
 
+colors=["#00aedb","#a200ff","#f47835","#d41243","#8ec127"]
+
 def createDataArray():
     dataArray = []
     dataArrayObject = {}
@@ -20,8 +22,7 @@ def createDataArray():
 
 
 def createDataPoint(episodeObject):
-		season = int(episodeObject["season"])
-		return {"x": int(episodeObject["episode"])+int(episodeObject["season"]), "y": float(episodeObject["episodeRating"]), "toolTipContent": episodeObject["title"], "markerColor":"#ffaaee"}
+		return {"x": int(episodeObject["episode"])+int(episodeObject["season"]), "y": float(episodeObject["episodeRating"]), "toolTipContent": episodeObject["title"], "markerColor":colors[int(episodeObject["season"])]}
 
 
 @app.route('/api', methods=['GET'])
