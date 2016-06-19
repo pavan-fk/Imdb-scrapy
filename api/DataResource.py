@@ -21,7 +21,7 @@ def createDataArray():
 
 def createDataPoint(episodeObject):
 		season = int(episodeObject["season"])
-		return {"x": int(episodeObject["episode"]), "y": float(episodeObject["episodeRating"]), "toolTipContent": episodeObject["title"], "color": '#%02X%02X%02X' % (season, season, season)}
+		return {"x": int(episodeObject["episode"])+int(episodeObject["season"]), "y": float(episodeObject["episodeRating"]), "toolTipContent": episodeObject["title"], "markerColor":"#ffaaee"}
 
 
 @app.route('/api', methods=['GET'])
