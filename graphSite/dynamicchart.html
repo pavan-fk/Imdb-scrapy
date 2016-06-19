@@ -11,13 +11,14 @@
 
                 // console.log(result[0]);
                 var chart = new CanvasJS.Chart("chartContainer", {
-                    toolTip:{   
-            content: "{label}"      
-        },
+                    // toolTip:{   
+                    //     content: "{label} rating: {y}"      
+                    // },
                     data: [
-                        {
-                            dataPoints: result[0]
-                        }
+                    {
+                        type: "line",
+                        dataPoints: result
+                    }
                     ]
                 });
                 chart.render();
@@ -26,6 +27,6 @@
     </script>
 </head>
 <body>
-    <div id="chartContainer" style="width: 800px; height: 380px;"></div>
+    <div id="chartContainer" style="height: 380px;"></div>
 </body>
 </html>
