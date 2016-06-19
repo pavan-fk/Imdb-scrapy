@@ -12,3 +12,5 @@ The tech I have used:
 - To scrap IMDB for ratings - [Scrapy](http://scrapy.org/)
 - To plot the graph - _undecided_
 
+Version 1 screen shot
+![image](http://i.imgur.com/83fgbxj.png)
