@@ -9,10 +9,14 @@
         $(document).ready(function () {
             $.getJSON("http://127.0.0.1:5000/api", function (result) {
 
+                // console.log(result[0]);
                 var chart = new CanvasJS.Chart("chartContainer", {
+                    toolTip:{   
+            content: "{label}"      
+        },
                     data: [
                         {
-                            dataPoints: result
+                            dataPoints: result[0]
                         }
                     ]
                 });

@@ -6,8 +6,8 @@ api = Api(app)
 
 @app.route('/api', methods=['GET'])
 def login():
-    response = json.jsonify({"x": 10, "y": 21, "label": "episode1"}, {"x": 20, "y": 25}, {
-                            "x": 30, "y": 20}, {"x": 40, "y": 25}, {"x": 50, "y": 27})
+    response = json.jsonify([[{"x": 10, "y": 21, "label": "episode1"}, {"x": 20, "y": 25}, {
+                            "x": 30, "y": 20}, {"x": 40, "y": 25}, {"x": 50, "y": 27}],])
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
